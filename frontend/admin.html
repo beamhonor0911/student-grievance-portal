@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Admin Dashboard — Manage, assign, and resolve student grievances efficiently." />
+  <meta name="author" content="Anshumaan Sharma" />
+  <title>Admin Dashboard — Grievance Portal</title>
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Sidebar Overlay -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal">
+      <h3>🗑️ Delete Grievance</h3>
+      <p id="deleteModalText">Are you sure you want to delete this grievance? This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
+        <button class="modal-btn danger" id="confirmDeleteBtn" onclick="confirmDelete()">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <span class="brand-icon">🛡️</span>
+        <h2>Grievance Portal <span>Admin Panel</span></h2>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" onclick="switchSection('analytics', this)" id="navAnalytics">
+          <span class="nav-icon">📊</span>
+          <span>Analytics</span>
+        </button>
+        <button class="nav-item" onclick="switchSection('grievances', this)" id="navGrievances">
+          <span class="nav-icon">📋</span>
+          <span>All Grievances</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar" id="userAvatar">A</div>
+          <div class="user-details">
+            <div class="user-name" id="userName">Admin</div>
+            <div class="user-role">Administrator</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <button class="hamburger" onclick="toggleSidebar()">☰</button>
+        <h1 class="page-title" id="pageTitle">Analytics Dashboard</h1>
+      </div>
+      <div class="header-right">
+        <button class="header-btn export-btn" onclick="exportCSV()">📥 Export CSV</button>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">📊</div>
+          <div class="stat-info">
+            <div class="stat-number" id="totalCount">0</div>
+            <div class="stat-label">Total Grievances</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⏳</div>
+          <div class="stat-info">
+            <div class="stat-number" id="pendingCount">0</div>
+            <div class="stat-label">Pending</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🔄</div>
+          <div class="stat-info">
+            <div class="stat-number" id="progressCount">0</div>
+            <div class="stat-label">In Progress</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-info">
+            <div class="stat-number" id="resolvedCount">0</div>
+            <div class="stat-label">Resolved</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANALYTICS SECTION -->
+      <div id="analyticsSection" class="content-section active">
+        <!-- Metrics Row -->
+        <div class="metrics-row">
+          <div class="metric-card">
+            <div class="metric-value" id="resolutionRate">0%</div>
+            <div class="metric-label">Resolution Rate</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value" id="rejectedCount">0</div>
+            <div class="metric-label">Rejected</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value" id="highPriorityCount">0</div>
+            <div class="metric-label">High Priority</div>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="analytics-grid">
+          <div class="analytics-card">
+            <h3>📊 Status Distribution</h3>
+            <div class="donut-chart-wrapper">
+              <div class="donut-chart" id="donutChart">
+                <svg viewBox="0 0 160 160"></svg>
+              </div>
+              <div class="donut-legend" id="donutLegend"></div>
+            </div>
+          </div>
+          <div class="analytics-card">
+            <h3>📁 Category Breakdown</h3>
+            <div class="bar-chart" id="barChart"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GRIEVANCES SECTION -->
+      <div id="grievancesSection" class="content-section">
+        <div class="section-header">
+          <h2>📋 All Grievances</h2>
+          <div class="filters-bar">
+            <div class="search-bar">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="searchInput" placeholder="Search by title, name, email..." oninput="applyFilters()" />
+            </div>
+            <select class="filter-select" id="filterStatus" onchange="applyFilters()">
+              <option value="">All Status</option>
+              <option value="Pending">Pending</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Resolved">Resolved</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+            <select class="filter-select" id="filterCategory" onchange="applyFilters()">
+              <option value="">All Categories</option>
+              <option value="Academic">Academic</option>
+              <option value="Hostel">Hostel</option>
+              <option value="Infrastructure">Infrastructure</option>
+              <option value="Financial">Financial</option>
+              <option value="Other">Other</option>
+            </select>
+            <select class="filter-select" id="filterPriority" onchange="applyFilters()">
+              <option value="">All Priority</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+        </div>
+        <div id="grievanceList" class="grievance-list"></div>
+        <div id="pagination" class="pagination"></div>
+      </div>
+
+      <!-- Footer -->
+      <footer class="app-footer">
+        Built with ❤️ by <a href="https://github.com/beamhonor0911" target="_blank">Anshumaan Sharma</a> · © 2024
+      </footer>
+    </main>
+  </div>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>

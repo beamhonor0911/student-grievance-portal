@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Student Dashboard — Submit and track your grievances in real-time." />
+  <meta name="author" content="Anshumaan Sharma" />
+  <title>Student Dashboard — Grievance Portal</title>
+  <link rel="stylesheet" href="css/student.css" />
+</head>
+<body>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Sidebar Overlay (Mobile) -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <div class="app-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <span class="brand-icon">🎓</span>
+        <h2>Grievance Portal <span>Student Panel</span></h2>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" onclick="switchSection('submit', this)" id="navSubmit">
+          <span class="nav-icon">➕</span>
+          <span>Submit Grievance</span>
+        </button>
+        <button class="nav-item" onclick="switchSection('mygrievances', this)" id="navGrievances">
+          <span class="nav-icon">📋</span>
+          <span>My Grievances</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar" id="userAvatar">A</div>
+          <div class="user-details">
+            <div class="user-name" id="userName">Student</div>
+            <div class="user-role">Student</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <button class="hamburger" id="hamburger" onclick="toggleSidebar()">☰</button>
+        <h1 class="page-title" id="pageTitle">Submit Grievance</h1>
+      </div>
+      <div class="header-right">
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">🌙</button>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">📊</div>
+          <div class="stat-info">
+            <div class="stat-number" id="totalCount">0</div>
+            <div class="stat-label">Total Submitted</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⏳</div>
+          <div class="stat-info">
+            <div class="stat-number" id="pendingCount">0</div>
+            <div class="stat-label">Pending</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🔄</div>
+          <div class="stat-info">
+            <div class="stat-number" id="progressCount">0</div>
+            <div class="stat-label">In Progress</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-info">
+            <div class="stat-number" id="resolvedCount">0</div>
+            <div class="stat-label">Resolved</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section Tabs (Mobile alternate) -->
+      <div class="section-tabs">
+        <button class="section-tab active" onclick="switchSection('submit', document.getElementById('navSubmit')); this.parentElement.querySelectorAll('.section-tab').forEach(t=>t.classList.remove('active')); this.classList.add('active');">➕ Submit</button>
+        <button class="section-tab" onclick="switchSection('mygrievances', document.getElementById('navGrievances')); this.parentElement.querySelectorAll('.section-tab').forEach(t=>t.classList.remove('active')); this.classList.add('active');">📋 My Grievances</button>
+      </div>
+
+      <!-- SUBMIT SECTION -->
+      <div id="submitSection" class="content-section active">
+        <div class="form-card">
+          <div class="form-card-header">
+            <h2>📝 Submit a New Grievance</h2>
+            <p>Describe your concern and we'll make sure it reaches the right department.</p>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="title">Grievance Title</label>
+              <input type="text" id="title" placeholder="Brief title of your grievance" maxlength="100" />
+            </div>
+            <div class="form-group">
+              <label for="category">Category</label>
+              <select id="category">
+                <option value="">Select category</option>
+                <option value="Academic">📚 Academic</option>
+                <option value="Hostel">🏠 Hostel</option>
+                <option value="Infrastructure">🏗️ Infrastructure</option>
+                <option value="Financial">💰 Financial</option>
+                <option value="Other">📌 Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Priority Level</label>
+            <div class="priority-selector" id="prioritySelector">
+              <div class="priority-option low" onclick="selectPriority('Low', this)">
+                <span class="priority-dot"></span>
+                <span class="priority-label">Low</span>
+              </div>
+              <div class="priority-option medium selected" onclick="selectPriority('Medium', this)">
+                <span class="priority-dot"></span>
+                <span class="priority-label">Medium</span>
+              </div>
+              <div class="priority-option high" onclick="selectPriority('High', this)">
+                <span class="priority-dot"></span>
+                <span class="priority-label">High</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" placeholder="Describe your grievance in detail. Include relevant dates, people, and locations..." maxlength="2000" oninput="updateCharCount()"></textarea>
+            <div class="char-counter"><span id="charCount">0</span> / 2000</div>
+          </div>
+
+          <button class="btn-submit" id="submitBtn" onclick="submitGrievance()">
+            <span class="btn-text">🚀 Submit Grievance</span>
+            <span class="spinner"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- MY GRIEVANCES SECTION -->
+      <div id="myGrievancesSection" class="content-section">
+        <div class="grievance-section-header">
+          <h2>📋 My Grievances</h2>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <div class="search-bar">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="searchInput" placeholder="Search grievances..." oninput="filterGrievances()" />
+            </div>
+            <select class="sort-select" id="sortSelect" onchange="filterGrievances()">
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="priority">By Priority</option>
+              <option value="status">By Status</option>
+            </select>
+          </div>
+        </div>
+        <div id="grievanceList" class="grievance-list"></div>
+      </div>
+
+      <!-- Footer -->
+      <footer class="app-footer">
+        Built with ❤️ by <a href="https://github.com/beamhonor0911" target="_blank">Anshumaan Sharma</a> · © 2024
+      </footer>
+    </main>
+  </div>
+
+  <script src="js/student.js"></script>
+</body>
+</html>

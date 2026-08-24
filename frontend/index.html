@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Student Grievance Portal — Submit, track, and manage student grievances with real-time status updates. Built by Anshumaan Sharma." />
+  <meta name="author" content="Anshumaan Sharma" />
+  <meta property="og:title" content="Student Grievance Portal" />
+  <meta property="og:description" content="A modern grievance management system for educational institutions." />
+  <title>Student Grievance Portal — Login</title>
+  <link rel="stylesheet" href="css/index.css" />
+</head>
+<body>
+
+  <!-- Animated Mesh Gradient Background -->
+  <div class="mesh-bg">
+    <div class="blob"></div>
+    <div class="blob"></div>
+    <div class="blob"></div>
+    <div class="blob"></div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Main Login Card -->
+  <div class="login-wrapper">
+
+    <!-- Left: Branding Panel -->
+    <div class="brand-panel">
+      <div class="brand-content">
+        <span class="brand-icon">🎓</span>
+        <h1>Student <span>Grievance</span> Portal</h1>
+        <p class="brand-desc">
+          Submit your concerns, track progress in real-time, and get resolutions faster through our streamlined grievance management system.
+        </p>
+        <ul class="features-list">
+          <li>
+            <div class="feat-icon">📝</div>
+            <span>Submit grievances with priority levels</span>
+          </li>
+          <li>
+            <div class="feat-icon">📊</div>
+            <span>Track real-time status updates</span>
+          </li>
+          <li>
+            <div class="feat-icon">🔔</div>
+            <span>Get notified on resolution progress</span>
+          </li>
+          <li>
+            <div class="feat-icon">🛡️</div>
+            <span>Secure & confidential submissions</span>
+          </li>
+        </ul>
+        <div class="brand-footer">
+          Built by <a href="https://github.com/beamhonor0911" target="_blank">Anshumaan Sharma</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Auth Panel -->
+    <div class="auth-panel">
+      <div class="auth-header">
+        <h2 id="authTitle">Welcome back</h2>
+        <p id="authSubtitle">Sign in to your account to continue</p>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <div class="tab active" id="tabLogin" onclick="switchTab('login', this)">Login</div>
+        <div class="tab" id="tabRegister" onclick="switchTab('register', this)">Register</div>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <div id="loginForm">
+        <div class="form-group">
+          <label for="loginEmail">Email Address</label>
+          <div class="input-wrapper">
+            <span class="input-icon">✉️</span>
+            <input type="email" id="loginEmail" placeholder="you@university.edu" autocomplete="email" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <div class="input-wrapper">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="loginPassword" placeholder="Enter your password" autocomplete="current-password" />
+            <button type="button" class="password-toggle" onclick="togglePassword('loginPassword', this)" aria-label="Toggle password visibility">👁️</button>
+          </div>
+        </div>
+        <button class="btn-primary" id="loginBtn" onclick="login()">
+          <span class="btn-text">Sign In</span>
+          <span class="spinner"></span>
+        </button>
+      </div>
+
+      <!-- REGISTER FORM -->
+      <div id="registerForm" class="hidden">
+        <div class="form-group">
+          <label for="regName">Full Name</label>
+          <div class="input-wrapper">
+            <span class="input-icon">👤</span>
+            <input type="text" id="regName" placeholder="Anshumaan Sharma" autocomplete="name" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="regEmail">Email Address</label>
+          <div class="input-wrapper">
+            <span class="input-icon">✉️</span>
+            <input type="email" id="regEmail" placeholder="you@university.edu" autocomplete="email" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="regPassword">Password</label>
+          <div class="input-wrapper">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="regPassword" placeholder="Create a strong password" autocomplete="new-password" oninput="checkPasswordStrength(this.value)" />
+            <button type="button" class="password-toggle" onclick="togglePassword('regPassword', this)" aria-label="Toggle password visibility">👁️</button>
+          </div>
+          <div class="password-strength" id="passwordStrength">
+            <div class="strength-bar">
+              <div class="strength-fill" id="strengthFill"></div>
+            </div>
+            <span class="strength-text" id="strengthText"></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="regRole">Register As</label>
+          <div class="input-wrapper">
+            <span class="input-icon">🎭</span>
+            <select id="regRole" onchange="toggleAdminCode()">
+              <option value="student">Student</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group admin-code-group" id="adminCodeGroup">
+          <label for="adminCode">Admin Secret Code</label>
+          <div class="input-wrapper">
+            <span class="input-icon">🔑</span>
+            <input type="password" id="adminCode" placeholder="Enter admin access code" />
+          </div>
+        </div>
+        <button class="btn-primary" id="registerBtn" onclick="register()">
+          <span class="btn-text">Create Account</span>
+          <span class="spinner"></span>
+        </button>
+      </div>
+
+      <div class="auth-footer">
+        © 2024 <a href="https://github.com/beamhonor0911" target="_blank">Anshumaan Sharma</a>. All rights reserved.
+      </div>
+    </div>
+  </div>
+
+  <script src="js/index.js"></script>
+</body>
+</html>
