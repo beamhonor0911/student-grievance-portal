@@ -2,8 +2,8 @@
 
 A full-stack web application that allows students to submit and track grievances, while administrators efficiently manage, assign, and resolve them through a centralized dashboard with real-time analytics.
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-3b82f6?style=for-the-badge&logo=vercel&logoColor=white)](https://student-grievance-portal-zeta.vercel.app/)
-[![GitHub](https://img.shields.io/badge/GitHub-beamhonor0911-181717?style=for-the-badge&logo=github)](https://github.com/beamhonor0911)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-3b82f6?style=for-the-badge&logo=vercel&logoColor=white)](https://github.com/beamhonor0911/student-grievance-portal)
+[![GitHub](https://img.shields.io/badge/GitHub-beamhonor0911-181717?style=for-the-badge&logo=github)](https://github.com/beamhonor0911/student-grievance-portal)
 
 **Built by [Anshumaan Sharma](https://github.com/beamhonor0911)**
 
@@ -143,9 +143,9 @@ For local development, update the `API` constant in the JS files to point to `ht
 ---
 
 ## 🌐 Deployment
-
-* **Frontend**: [student-grievance-portal-zeta.vercel.app](https://student-grievance-portal-zeta.vercel.app/)
-* **Backend**: Deployed on Render
+ 
+ * **Frontend**: Deployed on [Vercel](https://vercel.com)
+ * **Backend**: Deployed on [Render](https://render.com)
 
 ---
 
