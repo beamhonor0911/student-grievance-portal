@@ -9,6 +9,20 @@ A full-stack web application that allows students to submit and track grievances
 
 ---
 
+## 🔐 Demo & Testing Credentials
+
+Anyone testing or grading the application can explore both roles:
+
+| Role | How to Access | Secret Code |
+| :--- | :--- | :--- |
+| 👨‍🎓 **Student** | Select **Register** → Role: `Student` | *(None needed)* |
+| 👨‍💼 **Admin** | Select **Register** → Role: `Admin` | `ADMIN2024` |
+
+> [!TIP]
+> Use the **Admin Secret Code** `ADMIN2024` during registration to unlock the administrator panel with analytics charts, department assignment, and CSV export capabilities.
+
+---
+
 ## ✨ Features
 
 ### 👨‍🎓 Student Module
