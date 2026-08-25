@@ -3,7 +3,9 @@
    Author: Anshumaan Sharma
    ═══════════════════════════════════════════════ */
 
-const API = 'http://localhost:5000/api';
+const API = window.location.hostname === 'localhost' || window.location.protocol === 'file:'
+  ? 'http://localhost:5000/api'
+  : 'https://student-grievance-portal-1.onrender.com/api';
 const token = localStorage.getItem('token');
 const user = JSON.parse(localStorage.getItem('user') || '{}');
 
