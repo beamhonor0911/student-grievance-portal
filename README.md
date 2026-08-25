@@ -69,7 +69,7 @@ Anyone testing or grading the application can explore both roles:
 
 | Layer             | Technology                          |
 | ----------------- | ----------------------------------- |
-| Frontend          | HTML5, CSS3, Vanilla JavaScript ES6+|
+| Frontend          | HTML5, CSS3, JavaScript             |
 | Backend           | Node.js, Express.js                 |
 | Database          | JSON file-based (lowdb) — zero setup required |
 | Authentication    | JWT (JSON Web Tokens)               |
