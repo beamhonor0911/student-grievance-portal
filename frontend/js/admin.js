@@ -107,24 +107,28 @@ async function loadGrievances() {
     const res = await fetch(`${API}/grievance/all`, {
       headers: { 'Authorization': token }
     });
-    allGrievances = await res.json();
+    const data = await res.json();
+    allGrievances = Array.isArray(data) ? data : [];
     updateStats();
     renderAnalytics();
     applyFilters();
   } catch (err) {
     console.error('Error loading grievances:', err);
+    allGrievances = [];
+    applyFilters();
     Toast.show('Failed to load grievances', 'error');
   }
 }
 
 // ── Update Stats ──
 function updateStats() {
-  const total = allGrievances.length;
-  const pending = allGrievances.filter(g => g.status === 'Pending').length;
-  const inProgress = allGrievances.filter(g => g.status === 'In Progress').length;
-  const resolved = allGrievances.filter(g => g.status === 'Resolved').length;
-  const rejected = allGrievances.filter(g => g.status === 'Rejected').length;
-  const highPriority = allGrievances.filter(g => g.priority === 'High').length;
+  const list = Array.isArray(allGrievances) ? allGrievances : [];
+  const total = list.length;
+  const pending = list.filter(g => (g.status || 'Pending') === 'Pending').length;
+  const inProgress = list.filter(g => g.status === 'In Progress').length;
+  const resolved = list.filter(g => g.status === 'Resolved').length;
+  const rejected = list.filter(g => g.status === 'Rejected').length;
+  const highPriority = list.filter(g => (g.priority || 'Medium') === 'High').length;
   const resolutionRate = total > 0 ? Math.round((resolved / total) * 100) : 0;
 
   animateCounter(document.getElementById('totalCount'), total);
@@ -287,7 +291,7 @@ function renderGrievances() {
   const start = (currentPage - 1) * perPage;
   const page = filteredGrievances.slice(start, start + perPage);
 
-  if (filteredGrievances.length === 0) {
+  if (!filteredGrievances || filteredGrievances.length === 0) {
     list.innerHTML = `
       <div class="empty-state">
         <div class="empty-icon">📭</div>
@@ -297,55 +301,68 @@ function renderGrievances() {
     return;
   }
 
-  list.innerHTML = page.map((g, i) => `
-    <div class="grievance-card ${g.status.replace(' ', '-')}" style="animation-delay: ${i * 0.05}s">
-      <div class="grievance-header">
-        <div class="grievance-title">${escapeHtml(g.title)}</div>
-        <span class="badge ${g.status.replace(' ', '-')}">${g.status}</span>
-      </div>
-      <div class="grievance-meta">
-        <span class="meta-item">👤 ${escapeHtml(g.studentName)} (${escapeHtml(g.studentEmail)})</span>
-        <span class="meta-item">📁 ${g.category}</span>
-        <span class="meta-item">🔥 ${g.priority}</span>
-        <span class="meta-item">🏢 ${g.assignedTo}</span>
-      </div>
-      <div class="grievance-desc">${escapeHtml(g.description)}</div>
-      ${g.adminRemarks ? `<div class="existing-remarks">💬 Current Remarks: ${escapeHtml(g.adminRemarks)}</div>` : ''}
-      <div class="update-form">
-        <div>
-          <label>Status</label>
-          <select id="status-${g._id}">
-            <option ${g.status === 'Pending' ? 'selected' : ''}>Pending</option>
-            <option ${g.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
-            <option ${g.status === 'Resolved' ? 'selected' : ''}>Resolved</option>
-            <option ${g.status === 'Rejected' ? 'selected' : ''}>Rejected</option>
-          </select>
+  list.innerHTML = page.map((g, i) => {
+    const status = g.status || 'Pending';
+    const statusClass = status.replace(/\s+/g, '-');
+    const title = g.title || 'Untitled Grievance';
+    const studentName = g.studentName || 'Student';
+    const studentEmail = g.studentEmail || '';
+    const category = g.category || 'Other';
+    const priority = g.priority || 'Medium';
+    const assignedTo = g.assignedTo || 'Not Assigned';
+    const description = g.description || '';
+    const adminRemarks = g.adminRemarks || '';
+
+    return `
+      <div class="grievance-card ${statusClass}" style="animation-delay: ${i * 0.05}s">
+        <div class="grievance-header">
+          <div class="grievance-title">${escapeHtml(title)}</div>
+          <span class="badge ${statusClass}">${status}</span>
         </div>
-        <div>
-          <label>Assign To</label>
-          <select id="assign-${g._id}">
-            <option ${g.assignedTo === 'Not Assigned' ? 'selected' : ''}>Not Assigned</option>
-            <option ${g.assignedTo === 'Academic Dept' ? 'selected' : ''}>Academic Dept</option>
-            <option ${g.assignedTo === 'Hostel Dept' ? 'selected' : ''}>Hostel Dept</option>
-            <option ${g.assignedTo === 'Infrastructure Dept' ? 'selected' : ''}>Infrastructure Dept</option>
-            <option ${g.assignedTo === 'Finance Dept' ? 'selected' : ''}>Finance Dept</option>
-          </select>
+        <div class="grievance-meta">
+          <span class="meta-item">👤 ${escapeHtml(studentName)} (${escapeHtml(studentEmail)})</span>
+          <span class="meta-item">📁 ${category}</span>
+          <span class="meta-item">🔥 ${priority}</span>
+          <span class="meta-item">🏢 ${assignedTo}</span>
         </div>
-        <div>
-          <label>Remarks</label>
-          <input type="text" id="remarks-${g._id}" placeholder="Add admin remarks..." value="${escapeHtml(g.adminRemarks || '')}" />
+        <div class="grievance-desc">${escapeHtml(description)}</div>
+        ${adminRemarks ? `<div class="existing-remarks">💬 Current Remarks: ${escapeHtml(adminRemarks)}</div>` : ''}
+        <div class="update-form">
+          <div>
+            <label>Status</label>
+            <select id="status-${g._id}">
+              <option ${status === 'Pending' ? 'selected' : ''}>Pending</option>
+              <option ${status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+              <option ${status === 'Resolved' ? 'selected' : ''}>Resolved</option>
+              <option ${status === 'Rejected' ? 'selected' : ''}>Rejected</option>
+            </select>
+          </div>
+          <div>
+            <label>Assign To</label>
+            <select id="assign-${g._id}">
+              <option ${assignedTo === 'Not Assigned' ? 'selected' : ''}>Not Assigned</option>
+              <option ${assignedTo === 'Academic Dept' ? 'selected' : ''}>Academic Dept</option>
+              <option ${assignedTo === 'Hostel Dept' ? 'selected' : ''}>Hostel Dept</option>
+              <option ${assignedTo === 'Infrastructure Dept' ? 'selected' : ''}>Infrastructure Dept</option>
+              <option ${assignedTo === 'Finance Dept' ? 'selected' : ''}>Finance Dept</option>
+            </select>
+          </div>
+          <div>
+            <label>Remarks</label>
+            <input type="text" id="remarks-${g._id}" placeholder="Add admin remarks..." value="${escapeHtml(adminRemarks)}" />
+          </div>
+          <div class="action-buttons">
+            <button class="btn-update" onclick="updateGrievance('${g._id}')">Update</button>
+            <button class="btn-delete" onclick="showDeleteModal('${g._id}')">Delete</button>
+          </div>
         </div>
-        <div class="action-buttons">
-          <button class="btn-update" onclick="updateGrievance('${g._id}')">Update</button>
-          <button class="btn-delete" onclick="showDeleteModal('${g._id}')">Delete</button>
+        <div class="grievance-footer">
+          <span>📅 Submitted: ${formatDate(g.createdAt)}</span>
+          <span>🔄 Updated: ${formatDate(g.updatedAt)}</span>
         </div>
       </div>
-      <div class="grievance-footer">
-        <span>📅 Submitted: ${formatDate(g.createdAt)}</span>
-        <span>🔄 Updated: ${formatDate(g.updatedAt)}</span>
-      </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 }
 
 // ── Pagination ──

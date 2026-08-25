@@ -311,7 +311,7 @@ function buildTimeline(status) {
 function renderGrievances(grievances) {
   const list = document.getElementById('grievanceList');
 
-  if (grievances.length === 0) {
+  if (!grievances || grievances.length === 0) {
     list.innerHTML = `
       <div class="empty-state">
         <div class="empty-icon">📭</div>
@@ -321,32 +321,43 @@ function renderGrievances(grievances) {
     return;
   }
 
-  list.innerHTML = grievances.map((g, i) => `
-    <div class="grievance-card ${g.status.replace(' ', '-')}" style="animation-delay: ${i * 0.06}s" onclick="this.classList.toggle('expanded')">
-      <div class="grievance-header">
-        <div class="grievance-title">${escapeHtml(g.title)}</div>
-        <span class="badge ${g.status.replace(' ', '-')}">${g.status}</span>
+  list.innerHTML = grievances.map((g, i) => {
+    const status = g.status || 'Pending';
+    const statusClass = status.replace(/\s+/g, '-');
+    const title = g.title || 'Untitled Grievance';
+    const category = g.category || 'Other';
+    const priority = g.priority || 'Medium';
+    const assignedTo = g.assignedTo || 'Not Assigned';
+    const description = g.description || '';
+    const adminRemarks = g.adminRemarks || '';
+
+    return `
+      <div class="grievance-card ${statusClass}" style="animation-delay: ${i * 0.06}s" onclick="this.classList.toggle('expanded')">
+        <div class="grievance-header">
+          <div class="grievance-title">${escapeHtml(title)}</div>
+          <span class="badge ${statusClass}">${status}</span>
+        </div>
+        <div class="grievance-meta">
+          <span class="meta-item">📁 ${category}</span>
+          <span class="meta-item">🔥 ${priority}</span>
+          <span class="meta-item">🏢 ${assignedTo}</span>
+        </div>
+        <div class="grievance-desc">${escapeHtml(description)}</div>
+        <div class="grievance-timeline">
+          ${buildTimeline(status)}
+        </div>
+        ${adminRemarks ? `
+          <div class="admin-remarks">
+            <span class="remark-icon">💬</span>
+            <span><strong>Admin Remarks:</strong> ${escapeHtml(adminRemarks)}</span>
+          </div>` : ''}
+        <div class="grievance-footer">
+          <span>📅 Submitted: ${new Date(g.createdAt || Date.now()).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+          ${g.updatedAt && g.updatedAt !== g.createdAt ? `<span>🔄 Updated: ${new Date(g.updatedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>` : ''}
+        </div>
       </div>
-      <div class="grievance-meta">
-        <span class="meta-item">📁 ${g.category}</span>
-        <span class="meta-item">🔥 ${g.priority}</span>
-        <span class="meta-item">🏢 ${g.assignedTo}</span>
-      </div>
-      <div class="grievance-desc">${escapeHtml(g.description)}</div>
-      <div class="grievance-timeline">
-        ${buildTimeline(g.status)}
-      </div>
-      ${g.adminRemarks ? `
-        <div class="admin-remarks">
-          <span class="remark-icon">💬</span>
-          <span><strong>Admin Remarks:</strong> ${escapeHtml(g.adminRemarks)}</span>
-        </div>` : ''}
-      <div class="grievance-footer">
-        <span>📅 Submitted: ${new Date(g.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-        ${g.updatedAt !== g.createdAt ? `<span>🔄 Updated: ${new Date(g.updatedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>` : ''}
-      </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 }
 
 // ── XSS Prevention ──

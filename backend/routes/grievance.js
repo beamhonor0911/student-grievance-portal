@@ -3,6 +3,24 @@ const router = express.Router();
 const Grievance = require('../models/Grievance');
 const auth = require('../middleware/authMiddleware');
 
+// Helper to ensure grievance has all required fields
+function sanitizeGrievance(g) {
+  return {
+    ...g,
+    title: g.title || 'Untitled Grievance',
+    description: g.description || '',
+    category: g.category || 'Other',
+    priority: g.priority || 'Medium',
+    status: g.status || 'Pending',
+    assignedTo: g.assignedTo || 'Not Assigned',
+    adminRemarks: g.adminRemarks || '',
+    studentName: g.studentName || 'Student',
+    studentEmail: g.studentEmail || '',
+    createdAt: g.createdAt || new Date().toISOString(),
+    updatedAt: g.updatedAt || new Date().toISOString()
+  };
+}
+
 // SUBMIT grievance (student only)
 router.post('/submit', auth, async (req, res) => {
   try {
@@ -11,8 +29,11 @@ router.post('/submit', auth, async (req, res) => {
     const grievance = new Grievance({
       title,
       description,
-      category,
-      priority,
+      category: category || 'Other',
+      priority: priority || 'Medium',
+      status: 'Pending',
+      assignedTo: 'Not Assigned',
+      adminRemarks: '',
       student: req.user.id,
       studentName: req.user.name,
       studentEmail: req.user.email
@@ -30,7 +51,7 @@ router.post('/submit', auth, async (req, res) => {
 router.get('/my', auth, async (req, res) => {
   try {
     const grievances = await Grievance.find({ student: req.user.id }).sort({ createdAt: -1 });
-    res.json(grievances);
+    res.json(grievances.map(sanitizeGrievance));
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
@@ -68,7 +89,7 @@ router.get('/all', auth, async (req, res) => {
     }
 
     const grievances = await grievancesQuery;
-    res.json(grievances);
+    res.json(grievances.map(sanitizeGrievance));
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
