@@ -5,7 +5,7 @@
 
 const API = window.location.hostname === 'localhost' || window.location.protocol === 'file:'
   ? 'http://localhost:5000/api'
-  : 'https://student-grievance-portal-1.onrender.com/api';
+  : 'https://student-grievance-portal-74ri.onrender.com/api';
 const token = localStorage.getItem('token');
 const user = JSON.parse(localStorage.getItem('user') || '{}');
 

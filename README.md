@@ -2,6 +2,8 @@
 
 A full-stack web application that allows students to submit and track grievances, while administrators efficiently manage, assign, and resolve them through a centralized dashboard with real-time analytics.
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-3b82f6?style=for-the-badge&logo=vercel&logoColor=white)](https://student-grievance-portal-mu.vercel.app/)
+[![Backend API](https://img.shields.io/badge/Backend-Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://student-grievance-portal-74ri.onrender.com)
 [![GitHub](https://img.shields.io/badge/GitHub-beamhonor0911-181717?style=for-the-badge&logo=github)](https://github.com/beamhonor0911/student-grievance-portal)
 
 **Built by [Anshumaan Sharma](https://github.com/beamhonor0911)**
