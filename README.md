@@ -2,7 +2,6 @@
 
 A full-stack web application that allows students to submit and track grievances, while administrators efficiently manage, assign, and resolve them through a centralized dashboard with real-time analytics.
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-3b82f6?style=for-the-badge&logo=vercel&logoColor=white)](https://github.com/beamhonor0911/student-grievance-portal)
 [![GitHub](https://img.shields.io/badge/GitHub-beamhonor0911-181717?style=for-the-badge&logo=github)](https://github.com/beamhonor0911/student-grievance-portal)
 
 **Built by [Anshumaan Sharma](https://github.com/beamhonor0911)**
@@ -70,11 +69,10 @@ Anyone testing or grading the application can explore both roles:
 | ----------------- | ----------------------------------- |
 | Frontend          | HTML5, CSS3, Vanilla JavaScript ES6+|
 | Backend           | Node.js, Express.js                 |
-| Database          | MongoDB, Mongoose                   |
+| Database          | JSON file-based (lowdb) — zero setup required |
 | Authentication    | JWT (JSON Web Tokens)               |
 | Password Security | bcryptjs                            |
 | Charts            | Pure SVG (no libraries)             |
-| Deployment        | Render (Backend), Vercel (Frontend) |
 
 ---
 
@@ -97,10 +95,11 @@ student-grievance-portal/
 │       └── admin.js        # Admin logic, charts, CSV export, modals
 │
 ├── backend/
-│   ├── server.js           # Express server + MongoDB connection
+│   ├── server.js           # Express server (no external DB needed)
 │   ├── models/
-│   │   ├── User.js         # User schema (student/admin roles)
-│   │   └── Grievance.js    # Grievance schema with status tracking
+│   │   ├── User.js         # User model (student/admin roles)
+│   │   ├── Grievance.js    # Grievance model with status tracking
+│   │   └── jsonDb.js       # JSON file-based database engine
 │   ├── routes/
 │   │   ├── auth.js         # Register/Login endpoints
 │   │   └── grievance.js    # CRUD + stats + search + pagination
@@ -118,7 +117,7 @@ student-grievance-portal/
 ### Prerequisites
 
 * Node.js (v16+)
-* MongoDB Atlas account (or local MongoDB)
+* No database installation needed — uses built-in JSON file storage
 
 ### Backend Setup
 
@@ -128,24 +127,19 @@ npm install
 
 # Create .env file
 echo "PORT=5000" > .env
-echo "MONGO_URI=your_mongodb_connection_string" >> .env
 echo "JWT_SECRET=your_secret_key" >> .env
 
 npm start
 ```
 
+> [!NOTE]
+> Data is stored in a local `db.json` file that is auto-created on first run. No MongoDB or any external database setup is required.
+
 ### Frontend Setup
 
 No install needed — just open `frontend/index.html` in your browser.
 
-For local development, update the `API` constant in the JS files to point to `http://localhost:5000/api`.
-
----
-
-## 🌐 Deployment
- 
- * **Frontend**: Deployed on [Vercel](https://vercel.com)
- * **Backend**: Deployed on [Render](https://render.com)
+The frontend API URL is set to `http://localhost:5000/api` by default in the JS files.
 
 ---
 
@@ -181,6 +175,7 @@ For local development, update the `API` constant in the JS files to point to `ht
 * Mobile application (React Native)
 * Advanced analytics and reporting dashboard
 * Real-time WebSocket updates
+* MongoDB Atlas integration for cloud deployment
 
 ---
 

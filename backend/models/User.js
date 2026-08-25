@@ -1,28 +1,5 @@
-const mongoose = require('mongoose');
+const { createModel } = require('./jsonDb');
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  password: {
-    type: String,
-    required: true
-  },
-  role: {
-    type: String,
-    enum: ['student', 'admin', 'department'],
-    default: 'student'
-  },
-  department: {
-    type: String,
-    default: ''
-  }
-}, { timestamps: true });
+const User = createModel('users');
 
-module.exports = mongoose.model('User', userSchema); 
+module.exports = User;

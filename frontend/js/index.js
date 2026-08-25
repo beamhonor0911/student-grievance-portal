@@ -3,7 +3,15 @@
    Author: Anshumaan Sharma
    ═══════════════════════════════════════════════ */
 
-const API = 'https://student-grievance-portal-1.onrender.com/api';
+const API = 'http://localhost:5000/api';
+
+// ── Fetch with Timeout (prevents infinite spinner) ──
+function fetchWithTimeout(url, options = {}, timeoutMs = 15000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  return fetch(url, { ...options, signal: controller.signal })
+    .finally(() => clearTimeout(timer));
+}
 
 // ── Toast Notification System ──
 class Toast {
@@ -142,7 +150,7 @@ async function login() {
   setLoading('loginBtn', true);
 
   try {
-    const res = await fetch(`${API}/auth/login`, {
+    const res = await fetchWithTimeout(`${API}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
@@ -162,7 +170,11 @@ async function login() {
       setLoading('loginBtn', false);
     }
   } catch (err) {
-    Toast.show('Cannot connect to server. Please try again later.', 'error');
+    if (err.name === 'AbortError') {
+      Toast.show('Server is taking too long. It may be waking up — please try again in 30 seconds.', 'warning');
+    } else {
+      Toast.show('Cannot connect to server. Please try again later.', 'error');
+    }
     setLoading('loginBtn', false);
   }
 }
@@ -199,7 +211,7 @@ async function register() {
   setLoading('registerBtn', true);
 
   try {
-    const res = await fetch(`${API}/auth/register`, {
+    const res = await fetchWithTimeout(`${API}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, email, password, role })
@@ -224,7 +236,11 @@ async function register() {
       shakeForm('registerForm');
     }
   } catch (err) {
-    Toast.show('Cannot connect to server. Please try again later.', 'error');
+    if (err.name === 'AbortError') {
+      Toast.show('Server is taking too long. It may be waking up — please try again in 30 seconds.', 'warning');
+    } else {
+      Toast.show('Cannot connect to server. Please try again later.', 'error');
+    }
   }
 
   setLoading('registerBtn', false);
